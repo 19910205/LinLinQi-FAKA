@@ -11,6 +11,7 @@
 tmp/
 api/.cache/
 api/linlinqi
+api/linlinqi-*
 api/linlinqi.old
 api/catalog-fixture
 api/security-smoke
