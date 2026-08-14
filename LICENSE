@@ -1,0 +1,50 @@
+LinLinQi-FAKA 开源许可协议
+LinLinQi-FAKA Open Source License
+
+Copyright (c) 2026 LinLinQi
+
+中文条款
+========
+
+本项目（"软件"）以开源形式发布，但带有如下限制条款。下载、克隆、使用、修改或再分发本软件，即表示您同意以下全部条款：
+
+1. 仅供开发学习研究
+   本软件仅用于编程学习、技术研究和开发测试目的，严禁用于任何形式的商业运营。
+
+2. 禁止售卖
+   不得使用本软件（包括其源码、构建产物、修改版本或衍生作品）向任何人或机构售卖任何商品、服务或虚拟产品。
+
+3. 开源与再分发
+   在遵守本许可条款的前提下，您可以自由学习、研究、修改、复制和再分发本软件。任何再分发必须保留本许可声明及版权声明，且必须同样附带上述限制。
+
+4. 责任免责
+   使用本软件产生的一切行为与后果（包括但不限于运营、交易、法律、安全及经济风险）均由使用者自行承担，与作者完全无关。作者不对任何直接、间接、偶然、特殊或衍生损害承担责任，即使已被告知此类损害的可能性。
+
+5. 无担保
+   本软件按"现状"提供，不作任何明示或默示的担保，包括但不限于适销性、特定用途适用性及不侵权的担保。
+
+6. 无内置凭证
+   本软件不包含任何真实的支付机构、供货商凭证、生产密钥或可对外连接的敏感配置。生产环境接入外部系统需由使用者自行完成合法合规与安全审计。
+
+English Terms
+=============
+
+This project (the "Software") is released as open source, subject to the following restrictions. By downloading, cloning, using, modifying, or redistributing the Software, you agree to all of the terms below:
+
+1. For Development / Learning / Research Only
+   The Software is provided solely for programming education, technical research, and development testing. Any form of commercial operation is strictly prohibited.
+
+2. No Selling
+   You must not use the Software (including its source code, built artifacts, modifications, or derivative works) to sell any goods, services, or virtual products to any person or organization.
+
+3. Open Source & Redistribution
+   You are free to learn, research, modify, copy, and redistribute the Software, provided you comply with this license. Any redistribution must retain this license notice and copyright notice and must carry the same restrictions.
+
+4. Disclaimer of Liability
+   All actions and consequences arising from the use of the Software (including but not limited to operation, transactions, legal, security, and financial risks) are the sole responsibility of the user and are entirely unrelated to the author. The author shall not be liable for any direct, indirect, incidental, special, or consequential damages, even if advised of the possibility of such damages.
+
+5. No Warranty
+   The Software is provided "AS IS", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and non-infringement.
+
+6. No Built-in Credentials
+   The Software contains no real payment providers, supplier credentials, production keys, or sensitive external connection configurations. Any production integration with external systems must be completed by the user through their own compliance and security review.

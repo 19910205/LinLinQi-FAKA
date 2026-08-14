@@ -1,0 +1,285 @@
+name: linlinqi
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: 20m
+    max-file: "5"
+
+x-api-environment: &api-environment
+  # Defaults to production. A loopback-only local deployment may explicitly
+  # set APP_ENV=development so its HTTP URLs remain usable without pretending
+  # that localhost has public TLS.
+  APP_ENV: ${APP_ENV:-production}
+  APP_BIND_ADDRESS: 0.0.0.0
+  APP_PORT: 8080
+  APP_URL: ${APP_URL:?APP_URL is required}
+  SUPPLIER_CALLBACK_URL: ${SUPPLIER_CALLBACK_URL:-}
+  USER_APP_URL: ${USER_APP_URL:?USER_APP_URL is required}
+  SUPPORT_EMAIL: ${SUPPORT_EMAIL:?SUPPORT_EMAIL is required}
+  TRUSTED_PROXIES: ${TRUSTED_PROXIES:-}
+  DATABASE_URL: postgres://linlinqi:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/linlinqi?sslmode=disable
+  REDIS_ADDR: redis:6379
+  REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
+  REDIS_DB: ${REDIS_DB:-0}
+  JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+  ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET:?ADMIN_JWT_SECRET is required}
+  DATA_ENCRYPTION_KEY: ${DATA_ENCRYPTION_KEY:?DATA_ENCRYPTION_KEY is required}
+  OPENAPI_KEY: ${OPENAPI_KEY:?OPENAPI_KEY is required}
+  OPENAPI_SECRET: ${OPENAPI_SECRET:?OPENAPI_SECRET is required}
+  METRICS_TOKEN: ${METRICS_TOKEN:?METRICS_TOKEN is required}
+  CORS_ORIGINS: ${CORS_ORIGINS:?CORS_ORIGINS is required}
+  NOTIFICATION_RELAY_URL: ${NOTIFICATION_RELAY_URL:-}
+  NOTIFICATION_RELAY_SECRET: ${NOTIFICATION_RELAY_SECRET:-}
+  OAUTH_PROVIDERS_JSON: "${OAUTH_PROVIDERS_JSON:-{}}"
+  WORKER_CONCURRENCY: ${WORKER_CONCURRENCY:-12}
+  STORAGE_ROOT: /var/lib/linlinqi/storage
+  MEDIA_PUBLIC_BASE_URL: ${MEDIA_PUBLIC_BASE_URL:?MEDIA_PUBLIC_BASE_URL is required}
+  MEDIA_MAX_IMAGE_BYTES: ${MEDIA_MAX_IMAGE_BYTES:-20971520}
+  MEDIA_STORAGE_MAX_BYTES: ${MEDIA_STORAGE_MAX_BYTES:-214748364800}
+  MEDIA_MIN_FREE_BYTES: ${MEDIA_MIN_FREE_BYTES:-107374182400}
+  BOOTSTRAP_ADMIN: ${BOOTSTRAP_ADMIN:-false}
+  BOOTSTRAP_ADMIN_PASSWORD: ${BOOTSTRAP_ADMIN_PASSWORD:-}
+  SEED_DATA: ${SEED_DATA:-false}
+
+services:
+  postgres:
+    image: postgres:18.4-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: linlinqi
+      POSTGRES_USER: linlinqi
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256 --auth-local=scram-sha-256
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    networks: [data]
+    shm_size: 256mb
+    stop_grace_period: 60s
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U linlinqi -d linlinqi"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+
+  redis:
+    image: redis:8.8.1-alpine
+    restart: unless-stopped
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
+      REDISCLI_AUTH: ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+      - --appendfsync
+      - everysec
+      - --requirepass
+      - ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
+      - --maxmemory
+      - ${REDIS_MAXMEMORY:-512mb}
+      - --maxmemory-policy
+      - noeviction
+    volumes:
+      - redis_data:/data
+    networks: [data]
+    stop_grace_period: 30s
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+
+  media-init:
+    image: alpine:3.24.1
+    restart: "no"
+    user: "0:0"
+    network_mode: none
+    command:
+      - /bin/sh
+      - -ceu
+      - |
+        for directory in \
+          /var/lib/linlinqi/storage \
+          /var/lib/linlinqi/storage/media \
+          /var/lib/linlinqi/storage/media/objects \
+          /var/lib/linlinqi/storage/media/objects/sha256 \
+          /var/lib/linlinqi/storage/media/staging \
+          /var/lib/linlinqi/storage/media/quarantine \
+          /var/lib/linlinqi/storage/mirror \
+          /var/lib/linlinqi/storage/mirror/objects \
+          /var/lib/linlinqi/storage/spool \
+          /var/lib/linlinqi/storage/spool/protocol-sync \
+          /var/lib/linlinqi/storage/tmp; do
+          mkdir -p "$${directory}"
+          chown 10001:10001 "$${directory}"
+          chmod 0700 "$${directory}"
+        done
+    volumes:
+      - media_data:/var/lib/linlinqi
+    read_only: true
+    cap_drop: [ALL]
+    cap_add: [CHOWN, DAC_OVERRIDE, FOWNER]
+    pids_limit: 32
+    security_opt: ["no-new-privileges:true"]
+    logging: *default-logging
+
+  # A failed migration is a release gate: API and workers are not started until
+  # this one-shot container has applied and verified every schema migration.
+  migrate:
+    image: linlinqi-api:${LINLINQI_IMAGE_TAG:-local}
+    build: ./api
+    command: ["migrate"]
+    restart: "no"
+    init: true
+    environment:
+      <<: *api-environment
+      BOOTSTRAP_ADMIN: "false"
+      BOOTSTRAP_ADMIN_PASSWORD: ""
+      SEED_DATA: "false"
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    networks: [data]
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    cap_drop: [ALL]
+    pids_limit: 128
+    security_opt: ["no-new-privileges:true"]
+    stop_grace_period: 30s
+    logging: *default-logging
+
+  api:
+    image: linlinqi-api:${LINLINQI_IMAGE_TAG:-local}
+    build: ./api
+    command: ["api"]
+    restart: unless-stopped
+    init: true
+    environment: *api-environment
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      migrate: { condition: service_completed_successfully }
+      media-init: { condition: service_completed_successfully }
+    networks: [edge, data]
+    ports:
+      - ${BIND_ADDRESS:-127.0.0.1}:${API_PUBLISHED_PORT:-8080}:8080
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    volumes:
+      - media_data:/var/lib/linlinqi
+    cap_drop: [ALL]
+    pids_limit: 256
+    security_opt: ["no-new-privileges:true"]
+    stop_grace_period: 30s
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-T", "2", "-O", "/dev/null", "http://127.0.0.1:8080/ready"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 30s
+
+  worker:
+    image: linlinqi-api:${LINLINQI_IMAGE_TAG:-local}
+    build: ./api
+    command: ["worker"]
+    restart: unless-stopped
+    init: true
+    environment:
+      <<: *api-environment
+      BOOTSTRAP_ADMIN: "false"
+      BOOTSTRAP_ADMIN_PASSWORD: ""
+      SEED_DATA: "false"
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      migrate: { condition: service_completed_successfully }
+      media-init: { condition: service_completed_successfully }
+    networks: [edge, data]
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    volumes:
+      - media_data:/var/lib/linlinqi
+    cap_drop: [ALL]
+    pids_limit: 512
+    security_opt: ["no-new-privileges:true"]
+    stop_grace_period: 60s
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD-SHELL", "pidof linlinqi-api >/dev/null"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  user:
+    image: linlinqi-user:${LINLINQI_IMAGE_TAG:-local}
+    build:
+      context: ./user
+      args:
+        VITE_API_BASE_URL: ${PUBLIC_USER_API_URL:?PUBLIC_USER_API_URL is required}
+    depends_on:
+      api: { condition: service_healthy }
+    restart: unless-stopped
+    init: true
+    networks: [edge]
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    cap_drop: [ALL]
+    pids_limit: 64
+    security_opt: ["no-new-privileges:true"]
+    ports:
+      - ${BIND_ADDRESS:-127.0.0.1}:${USER_PUBLISHED_PORT:-5173}:8080
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-T", "2", "-O", "/dev/null", "http://127.0.0.1:8080/healthz"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  admin:
+    image: linlinqi-admin:${LINLINQI_IMAGE_TAG:-local}
+    build:
+      context: ./admin
+      args:
+        VITE_API_BASE_URL: ${PUBLIC_ADMIN_API_URL:?PUBLIC_ADMIN_API_URL is required}
+    depends_on:
+      api: { condition: service_healthy }
+    restart: unless-stopped
+    init: true
+    networks: [edge]
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    cap_drop: [ALL]
+    pids_limit: 64
+    security_opt: ["no-new-privileges:true"]
+    ports:
+      - ${BIND_ADDRESS:-127.0.0.1}:${ADMIN_PUBLISHED_PORT:-5174}:8080
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-T", "2", "-O", "/dev/null", "http://127.0.0.1:8080/healthz"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  postgres_data:
+  redis_data:
+  media_data:
+
+networks:
+  edge:
+  data:
+    internal: true
