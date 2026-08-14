@@ -1,0 +1,30 @@
+{
+  "gateway_url": "http://127.0.0.1:8089",
+  "username": "a36fa368",
+  "password": "PASTE_GATEWAY_PASSWORD",
+  "wallets": [
+    { "trade_type": "usdt.trc20",    "address": "TYourTronUSDTAddressHere", "name": "USDT-TRC20 主钱包", "remark": "主收款" },
+    { "trade_type": "usdc.trc20",    "address": "TYourTronUSDCAddressHere", "name": "USDC-TRC20", "remark": "" },
+    { "trade_type": "usdt.erc20",    "address": "0xYourEthereumAddress",    "name": "USDT-ERC20", "remark": "" },
+    { "trade_type": "usdc.erc20",    "address": "0xYourEthereumAddress",    "name": "USDC-ERC20", "remark": "" },
+    { "trade_type": "usdt.bep20",    "address": "0xYourBscAddress",         "name": "USDT-BEP20", "remark": "" },
+    { "trade_type": "usdc.bep20",    "address": "0xYourBscAddress",         "name": "USDC-BEP20", "remark": "" },
+    { "trade_type": "usdt.polygon",  "address": "0xYourPolygonAddress",     "name": "USDT-Polygon", "remark": "" },
+    { "trade_type": "usdc.polygon",  "address": "0xYourPolygonAddress",     "name": "USDC-Polygon", "remark": "" },
+    { "trade_type": "usdt.arbitrum", "address": "0xYourArbitrumAddress",    "name": "USDT-Arbitrum", "remark": "" },
+    { "trade_type": "usdc.arbitrum", "address": "0xYourArbitrumAddress",    "name": "USDC-Arbitrum", "remark": "" },
+    { "trade_type": "usdt.solana",   "address": "YourSolanaAddress",        "name": "USDT-Solana", "remark": "" },
+    { "trade_type": "usdc.solana",   "address": "YourSolanaAddress",        "name": "USDC-Solana", "remark": "" },
+    { "trade_type": "usdt.aptos",    "address": "YourAptosAddress",         "name": "USDT-Aptos", "remark": "" },
+    { "trade_type": "usdc.aptos",    "address": "YourAptosAddress",         "name": "USDC-Aptos", "remark": "" },
+    { "trade_type": "usdt.xlayer",   "address": "0xYourXLayerAddress",      "name": "USDT-X Layer", "remark": "" },
+    { "trade_type": "usdc.xlayer",   "address": "0xYourXLayerAddress",      "name": "USDC-X Layer", "remark": "" },
+    { "trade_type": "usdc.base",     "address": "0xYourBaseAddress",        "name": "USDC-Base", "remark": "" },
+    { "trade_type": "usdt.plasma",   "address": "YourPlasmaAddress",        "name": "USDT-Plasma", "remark": "" },
+    { "trade_type": "usdt.ton",      "address": "UQYourTonAddress",         "name": "USDT-TON", "remark": "" },
+    { "trade_type": "tron.trx",      "address": "TYourTronTRXAddress",      "name": "TRX-Tron", "remark": "" },
+    { "trade_type": "ethereum.eth",  "address": "0xYourEthereumAddress",    "name": "ETH-Ethereum", "remark": "" },
+    { "trade_type": "bsc.bnb",       "address": "0xYourBscAddress",         "name": "BNB-BSC", "remark": "" },
+    { "trade_type": "ton.gram",      "address": "UQYourTonAddress",         "name": "GRAM-TON", "remark": "" }
+  ]
+}

@@ -1,0 +1,455 @@
+openapi: 3.1.0
+info:
+  title: LinLinQi Supplier OpenAPI
+  version: 1.0.0
+  description: >-
+    Clean-room canonical supplier contract. Monetary values are integer minor
+    units and always carry an ISO-4217 currency and minor_unit.
+servers:
+  - url: /
+security:
+  - LinLinQiSignature: []
+paths:
+  /openapi/v1/account/balance:
+    get:
+      operationId: getAccountBalance
+      summary: Read the credential billing wallet
+      parameters:
+        - $ref: '#/components/parameters/Currency'
+      responses:
+        '200':
+          $ref: '#/components/responses/BalanceResponse'
+        '401': { $ref: '#/components/responses/ErrorResponse' }
+  /openapi/v1/categories:
+    get:
+      operationId: listCategories
+      summary: List the published category tree
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/UpdatedAfter'
+        - $ref: '#/components/parameters/IncludeInactive'
+      responses:
+        '200':
+          $ref: '#/components/responses/CategoryResponse'
+        '422': { $ref: '#/components/responses/ErrorResponse' }
+  /openapi/v1/products:
+    get:
+      operationId: listProducts
+      summary: List products, variants, media and fulfillment fields
+      parameters:
+        - $ref: '#/components/parameters/Currency'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/UpdatedAfter'
+        - $ref: '#/components/parameters/IncludeInactive'
+      responses:
+        '200':
+          $ref: '#/components/responses/ProductResponse'
+        '422': { $ref: '#/components/responses/ErrorResponse' }
+        '503': { $ref: '#/components/responses/ErrorResponse' }
+  /openapi/v1/products/{product_id}:
+    get:
+      operationId: getProduct
+      summary: Read one product with variants, media and fulfillment fields
+      parameters:
+        - $ref: '#/components/parameters/ProductID'
+        - $ref: '#/components/parameters/Currency'
+        - $ref: '#/components/parameters/IncludeInactive'
+      responses:
+        '200': { $ref: '#/components/responses/ProductDetailResponse' }
+        '404': { $ref: '#/components/responses/ErrorResponse' }
+        '422': { $ref: '#/components/responses/ErrorResponse' }
+        '503': { $ref: '#/components/responses/ErrorResponse' }
+  /openapi/v1/products/{product_id}/stock:
+    get:
+      operationId: getProductStock
+      summary: Read reservation-aware available stock
+      parameters:
+        - $ref: '#/components/parameters/ProductID'
+        - name: variant_id
+          in: query
+          required: false
+          schema: { type: string, maxLength: 180 }
+      responses:
+        '200': { $ref: '#/components/responses/StockResponse' }
+        '404': { $ref: '#/components/responses/ErrorResponse' }
+  /openapi/v1/products/{product_id}/quote:
+    post:
+      operationId: quoteProduct
+      summary: Resolve the server-authoritative sale price without creating an order
+      parameters:
+        - $ref: '#/components/parameters/ProductID'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ProductQuoteRequest' }
+      responses:
+        '200': { $ref: '#/components/responses/ProductQuoteResponse' }
+        '401': { $ref: '#/components/responses/ErrorResponse' }
+        '403': { $ref: '#/components/responses/ErrorResponse' }
+        '422': { $ref: '#/components/responses/ErrorResponse' }
+        '503': { $ref: '#/components/responses/ErrorResponse' }
+  /openapi/v1/orders:
+    post:
+      operationId: createOrder
+      summary: Create an idempotent supplier order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateOrderRequest' }
+      responses:
+        '201': { $ref: '#/components/responses/OrderResponse' }
+        '409': { $ref: '#/components/responses/ErrorResponse' }
+        '422': { $ref: '#/components/responses/ErrorResponse' }
+  /openapi/v1/orders/{order_no}:
+    get:
+      operationId: getOrder
+      summary: Query an order and its delivery state
+      parameters:
+        - name: order_no
+          in: path
+          required: true
+          schema: { type: string, maxLength: 80 }
+        - name: X-Order-Token
+          in: header
+          required: true
+          schema: { type: string, minLength: 40, maxLength: 100 }
+      responses:
+        '200': { $ref: '#/components/responses/OrderResponse' }
+        '404': { $ref: '#/components/responses/ErrorResponse' }
+components:
+  securitySchemes:
+    LinLinQiSignature:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: >-
+        Also send X-Timestamp, X-Nonce and X-Signature. Signature source is
+        timestamp.nonce.method.request_target.sha256(raw_body). The request
+        target is the path plus the exact raw query (including ordering and
+        percent encoding) when a query is present.
+  parameters:
+    Currency:
+      name: currency
+      in: query
+      required: false
+      schema: { type: string, pattern: '^[A-Z]{3}$' }
+    Page:
+      name: page
+      in: query
+      required: false
+      schema: { type: integer, minimum: 1, maximum: 1000000 }
+    PageSize:
+      name: page_size
+      in: query
+      required: false
+      schema: { type: integer, minimum: 1, maximum: 500, default: 100 }
+    UpdatedAfter:
+      name: updated_after
+      in: query
+      required: false
+      schema: { type: string, format: date-time }
+    IncludeInactive:
+      name: include_inactive
+      in: query
+      required: false
+      schema: { type: boolean, default: false }
+    ProductID:
+      name: product_id
+      in: path
+      required: true
+      description: Stable product UUID or slug
+      schema: { type: string, maxLength: 180 }
+  responses:
+    ErrorResponse:
+      description: LinLinQi business error
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/EnvelopeError' }
+    BalanceResponse:
+      description: Wallet snapshot
+      headers:
+        Cache-Control: { schema: { type: string, example: no-store } }
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/Envelope'
+              - type: object
+                properties:
+                  data: { $ref: '#/components/schemas/Balance' }
+    CategoryResponse:
+      description: Category list; pagination metadata is returned in X-LinLinQi-* headers
+      headers:
+        X-LinLinQi-Total-Count: { schema: { type: integer, format: int64 } }
+        X-LinLinQi-Page: { schema: { type: integer } }
+        X-LinLinQi-Page-Size: { schema: { type: integer } }
+        X-LinLinQi-Has-More: { schema: { type: boolean } }
+        X-LinLinQi-Returned-Count: { schema: { type: integer } }
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/Envelope'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Category' }
+    ProductResponse:
+      description: Product list; pagination metadata is returned in X-LinLinQi-* headers
+      headers:
+        X-LinLinQi-Total-Count: { schema: { type: integer, format: int64 } }
+        X-LinLinQi-Page: { schema: { type: integer } }
+        X-LinLinQi-Page-Size: { schema: { type: integer } }
+        X-LinLinQi-Has-More: { schema: { type: boolean } }
+        X-LinLinQi-Returned-Count: { schema: { type: integer } }
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/Envelope'
+              - type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Product' }
+    ProductDetailResponse:
+      description: One complete product record
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/Envelope'
+              - type: object
+                properties:
+                  data: { $ref: '#/components/schemas/Product' }
+    StockResponse:
+      description: Available stock after active local reservations
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/Envelope'
+              - type: object
+                properties:
+                  data: { $ref: '#/components/schemas/StockSnapshot' }
+    ProductQuoteResponse:
+      description: Credential-scoped authoritative sale quote; no cost or margin fields are exposed
+      headers:
+        Cache-Control: { schema: { type: string, example: no-store } }
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/Envelope'
+              - type: object
+                properties:
+                  data: { $ref: '#/components/schemas/ProductQuote' }
+    OrderResponse:
+      description: Order state and delivery (delivery is withheld until paid and delivered)
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/Envelope'
+              - type: object
+                properties:
+                  data: { $ref: '#/components/schemas/OrderResult' }
+  schemas:
+    Envelope:
+      type: object
+      required: [code, message, data]
+      properties:
+        code: { type: integer }
+        message: { type: string }
+        data: {}
+    EnvelopeError:
+      type: object
+      required: [code, message]
+      properties:
+        code: { type: integer }
+        message: { type: string }
+        data: {}
+    Money:
+      type: object
+      required: [amount, currency, minor_unit]
+      properties:
+        amount: { type: integer, format: int64, minimum: 0 }
+        currency: { type: string, pattern: '^[A-Z]{3}$' }
+        minor_unit: { type: integer, minimum: 0, maximum: 6 }
+    Balance:
+      type: object
+      required: [balance, frozen, available_balance, currency, minor_unit, updated_at]
+      properties:
+        balance: { type: integer, format: int64, minimum: 0 }
+        frozen: { type: integer, format: int64, minimum: 0 }
+        available_balance: { type: integer, format: int64, minimum: 0 }
+        currency: { type: string, pattern: '^[A-Z]{3}$' }
+        minor_unit: { type: integer, minimum: 0, maximum: 6 }
+        updated_at: { type: string, format: date-time }
+    Category:
+      type: object
+      required: [id, external_id, name, slug, description, image_url, sort, status, created_at, updated_at]
+      properties:
+        id: { type: string, format: uuid }
+        external_id: { type: string, maxLength: 180 }
+        external_parent_id: { type: string, maxLength: 180 }
+        name: { type: string, maxLength: 200 }
+        slug: { type: string, maxLength: 160 }
+        description: { type: string }
+        icon: { type: string, maxLength: 1000 }
+        image_url: { type: string, format: uri, maxLength: 1000 }
+        sort: { type: integer }
+        status: { type: string, enum: [active, inactive] }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+    InputField:
+      type: object
+      required: [id, key, label, input_type, required, sensitive, options, min_length, max_length]
+      properties:
+        id: { type: string, format: uuid }
+        key: { type: string, pattern: '^[a-z][a-z0-9_]{0,63}$' }
+        label: { type: string }
+        input_type: { type: string, enum: [text, textarea, number, email, url, select, checkbox, password] }
+        required: { type: boolean }
+        sensitive: { type: boolean }
+        placeholder: { type: string }
+        help_text: { type: string }
+        options: { type: array, items: {} }
+        validation_pattern: { type: string }
+        min_length: { type: integer, minimum: 0 }
+        max_length: { type: integer, minimum: 0 }
+        sort: { type: integer }
+    Variant:
+      type: object
+      required: [id, external_id, external_sku, name, attributes, price, compare_price, stock, minimum, maximum, purchase_limit, status]
+      properties:
+        id: { type: string, format: uuid }
+        external_id: { type: string }
+        external_sku: { type: string }
+        name: { type: string }
+        attributes: { type: object, additionalProperties: true }
+        price: { type: integer, format: int64 }
+        compare_price: { type: integer, format: int64 }
+        stock: { type: integer, format: int64, minimum: 0 }
+        minimum: { type: integer, minimum: 1 }
+        maximum: { type: integer, minimum: 0 }
+        purchase_limit: { type: integer, minimum: 0 }
+        status: { type: string, enum: [active, inactive] }
+    FX:
+      type: object
+      properties:
+        snapshot_id: { type: string, format: uuid, nullable: true }
+        source_currency: { type: string }
+        target_currency: { type: string }
+        rate: { type: string, pattern: '^[0-9]+(\.[0-9]+)?$' }
+        source: { type: string }
+        source_tier: { type: string }
+        expires_at: { type: string, format: date-time, nullable: true }
+    Product:
+      type: object
+      required: [id, external_id, name, category_id, currency, source_currency, price, compare_price, stock, minimum, maximum, status, image_urls, created_at, updated_at]
+      properties:
+        id: { type: string, format: uuid }
+        external_id: { type: string, maxLength: 180 }
+        external_sku: { type: string }
+        external_category_id: { type: string }
+        category_id: { type: string, format: uuid }
+        name: { type: string }
+        slug: { type: string }
+        summary: { type: string }
+        description: { type: string }
+        cover_url: { type: string, format: uri }
+        image_urls: { type: array, items: { type: string, format: uri } }
+        source_currency: { type: string, pattern: '^[A-Z]{3}$' }
+        currency: { type: string, pattern: '^[A-Z]{3}$' }
+        fx: { $ref: '#/components/schemas/FX' }
+        price: { type: integer, format: int64 }
+        compare_price: { type: integer, format: int64 }
+        stock: { type: integer, format: int64, minimum: 0 }
+        minimum: { type: integer, minimum: 1 }
+        maximum: { type: integer, minimum: 0 }
+        status: { type: string, enum: [active, inactive] }
+        delivery: { type: string }
+        delivery_type: { type: string }
+        inventory_mode: { type: string, enum: [local, supplier] }
+        tags: { type: string }
+        variants: { type: array, items: { $ref: '#/components/schemas/Variant' } }
+        input_fields: { type: array, items: { $ref: '#/components/schemas/InputField' } }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+    StockSnapshot:
+      type: object
+      required: [external_product_id, product_id, stock, stock_status, observed_at]
+      properties:
+        external_product_id: { type: string, maxLength: 180 }
+        product_id: { type: string, format: uuid }
+        variant_id: { type: string, format: uuid }
+        stock: { type: integer, format: int64, minimum: 0 }
+        stock_status: { type: string, enum: [in_stock, out_of_stock] }
+        observed_at: { type: string, format: date-time }
+    ProductQuoteRequest:
+      type: object
+      additionalProperties: false
+      required: [quantity]
+      properties:
+        variant_id:
+          type: string
+          maxLength: 180
+          description: Stable variant UUID or SKU; required when the product has active variants
+        quantity: { type: integer, minimum: 1, maximum: 20 }
+        currency: { type: string, pattern: '^[A-Z]{3}$' }
+    ProductQuote:
+      type: object
+      required: [external_product_id, product_id, quantity, unit_amount, subtotal, discount_amount, amount, currency, minor_unit, fx, quoted_at]
+      properties:
+        external_product_id: { type: string, maxLength: 180 }
+        product_id: { type: string, format: uuid }
+        variant_id: { type: string, format: uuid }
+        quantity: { type: integer, minimum: 1, maximum: 20 }
+        unit_amount: { type: integer, format: int64, minimum: 0 }
+        subtotal: { type: integer, format: int64, minimum: 0 }
+        discount_amount: { type: integer, format: int64, minimum: 0 }
+        amount: { type: integer, format: int64, minimum: 0 }
+        currency: { type: string, pattern: '^[A-Z]{3}$' }
+        minor_unit: { type: integer, minimum: 0, maximum: 6 }
+        fx: { $ref: '#/components/schemas/FX' }
+        quoted_at: { type: string, format: date-time }
+    CreateOrderRequest:
+      type: object
+      required: [external_product_id, quantity, email, client_order_no]
+      properties:
+        product_id: { type: string, maxLength: 180, description: Compatibility alias for external_product_id }
+        external_product_id: { type: string, maxLength: 180 }
+        variant_id: { type: string, maxLength: 180 }
+        quantity: { type: integer, minimum: 1, maximum: 20 }
+        email: { type: string, format: email, maxLength: 190 }
+        payment_method: { type: string, enum: [supplier_balance], default: supplier_balance }
+        client_order_no: { type: string, maxLength: 100 }
+        callback_url: { type: string, format: uri, maxLength: 500 }
+        parameters: { type: object, additionalProperties: { type: string } }
+        input_values:
+          type: array
+          maxItems: 50
+          items:
+            type: object
+            required: [field_id, value]
+            properties:
+              field_id: { type: string, format: uuid }
+              value: { type: string, maxLength: 10000 }
+        currency: { type: string, pattern: '^[A-Z]{3}$' }
+    OrderResult:
+      type: object
+      required: [client_order_no, external_order_no, status, deliveries, cost, cost_currency, cost_minor_unit]
+      properties:
+        client_order_no: { type: string }
+        external_order_no: { type: string }
+        status: { type: string, enum: [pending_payment, paid, processing, delivered, completed, failed, cancelled, expired] }
+        deliveries: { type: array, items: { type: string } }
+        cost: { type: integer, format: int64, minimum: 0 }
+        cost_currency: { type: string, pattern: '^[A-Z]{3}$' }
+        cost_minor_unit: { type: integer, minimum: 0, maximum: 6 }

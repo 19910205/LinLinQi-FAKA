@@ -1,0 +1,186 @@
+{
+  "tool": "LinLinQi security-smoke",
+  "version": "1.0.0",
+  "target": "http://127.0.0.1:8080",
+  "started_at": "2026-08-09T15:04:33.121307Z",
+  "finished_at": "2026-08-09T15:04:34.128346Z",
+  "limits": {
+    "concurrency": 8,
+    "request_budget": 180,
+    "requests_used": 95
+  },
+  "summary": {
+    "fail": 0,
+    "pass": 20,
+    "skip": 1,
+    "warn": 0
+  },
+  "results": [
+    {
+      "name": "refresh_token_replay",
+      "category": "auth",
+      "status": "pass",
+      "http_status": 401,
+      "requests": 1,
+      "duration_ms": 7
+    },
+    {
+      "name": "refresh_token_rotation",
+      "category": "auth",
+      "status": "pass",
+      "requests": 1,
+      "duration_ms": 2
+    },
+    {
+      "name": "temporary_user_registration",
+      "category": "auth",
+      "status": "pass",
+      "http_status": 201,
+      "requests": 1,
+      "duration_ms": 68
+    },
+    {
+      "name": "wrong_password_rejected",
+      "category": "auth",
+      "status": "pass",
+      "http_status": 401,
+      "requests": 1,
+      "duration_ms": 62
+    },
+    {
+      "name": "idor_ticket",
+      "category": "authz",
+      "status": "pass",
+      "http_status": 404,
+      "requests": 1,
+      "duration_ms": 3
+    },
+    {
+      "name": "jwt_tamper",
+      "category": "authz",
+      "status": "pass",
+      "http_status": 401,
+      "requests": 1,
+      "duration_ms": 0
+    },
+    {
+      "name": "order_lookup_token_enforced",
+      "category": "authz",
+      "status": "pass",
+      "http_status": 404,
+      "requests": 1,
+      "duration_ms": 2
+    },
+    {
+      "name": "health",
+      "category": "availability",
+      "status": "pass",
+      "http_status": 200,
+      "requests": 1,
+      "duration_ms": 23
+    },
+    {
+      "name": "catalog_discovery",
+      "category": "catalog",
+      "status": "pass",
+      "http_status": 200,
+      "requests": 1,
+      "duration_ms": 26
+    },
+    {
+      "name": "product_detail_discovery",
+      "category": "catalog",
+      "status": "pass",
+      "http_status": 200,
+      "requests": 1,
+      "duration_ms": 6
+    },
+    {
+      "name": "inventory_race",
+      "category": "financial",
+      "status": "skip",
+      "requests": 0,
+      "duration_ms": 0,
+      "note": "disabled"
+    },
+    {
+      "name": "order_replay",
+      "category": "financial",
+      "status": "pass",
+      "requests": 2,
+      "duration_ms": 37,
+      "note": "created=2 unique_orders=1"
+    },
+    {
+      "name": "recharge_idempotency",
+      "category": "financial",
+      "status": "pass",
+      "requests": 2,
+      "duration_ms": 7,
+      "note": "unique recharge records observed=1"
+    },
+    {
+      "name": "recharge_idempotency_conflict",
+      "category": "financial",
+      "status": "pass",
+      "http_status": 409,
+      "requests": 1,
+      "duration_ms": 1
+    },
+    {
+      "name": "catalog_sql_xss_payload",
+      "category": "injection",
+      "status": "pass",
+      "http_status": 200,
+      "requests": 1,
+      "duration_ms": 1
+    },
+    {
+      "name": "quote_identifier_injection",
+      "category": "injection",
+      "status": "pass",
+      "http_status": 422,
+      "requests": 1,
+      "duration_ms": 23
+    },
+    {
+      "name": "quote_concurrency",
+      "category": "load",
+      "status": "pass",
+      "requests": 60,
+      "duration_ms": 66,
+      "note": "bounded concurrency=8 throttled=0"
+    },
+    {
+      "name": "forged_payment_callback",
+      "category": "payment",
+      "status": "pass",
+      "http_status": 401,
+      "requests": 1,
+      "duration_ms": 0
+    },
+    {
+      "name": "payment_channel_discovery",
+      "category": "payment",
+      "status": "pass",
+      "http_status": 200,
+      "requests": 1,
+      "duration_ms": 2
+    },
+    {
+      "name": "login_rate_limit",
+      "category": "rate_limit",
+      "status": "pass",
+      "requests": 13,
+      "duration_ms": 659,
+      "note": "throttled=2"
+    },
+    {
+      "name": "webhook_ssrf",
+      "category": "ssrf",
+      "status": "pass",
+      "requests": 3,
+      "duration_ms": 2
+    }
+  ]
+}

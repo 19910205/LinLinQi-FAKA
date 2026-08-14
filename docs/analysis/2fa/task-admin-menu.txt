@@ -1,0 +1,21 @@
+对参考归档 /private/tmp/llq-2fa-analysis 做 clean-room 界面行为审计（只分析菜单结构/排列/入口，绝不复制代码）。
+
+专题：后台菜单排列与入口。
+
+重点文件：
+- app/View/Admin/Toolbar.html
+- app/View/Admin/Header.html
+- app/View/Admin/Footer.html
+- app/Controller/Admin/Authentication.php
+- app/Util/AdminEntrance.php
+- 数据库/配置中菜单表定义（搜索 menu、sidebar、entrance、permission 相关 SQL/模型）
+
+需要输出：
+1) 完整菜单树（一级/二级/三级，顺序，图标，路由）
+2) 菜单是否按角色/权限动态显示
+3) 顶部/侧边/工具条布局关系
+4) 供货商/供货商/商品/订单/财务/系统设置等模块所在位置
+5) 与菜单对应的后台页面清单
+
+用 apply_patch 创建 /Users/dahai/Documents/faka/docs/analysis/2fa/04-admin-menu.md（中文，用树形或表格清晰列出）。
+完成后回复一句话摘要。

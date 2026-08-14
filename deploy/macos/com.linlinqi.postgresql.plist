@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.linlinqi.postgresql</string>
+  <key>Umask</key><integer>63</integer>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>LC_ALL</key><string>en_US.UTF-8</string>
+    <key>LANG</key><string>en_US.UTF-8</string>
+  </dict>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/local/opt/postgresql@18/bin/postgres</string>
+    <string>-D</string><string>/usr/local/var/postgresql@18</string>
+    <string>-c</string><string>config_file=/Users/dahai/.linlinqi/postgres/postgresql.conf</string>
+  </array>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <key>ExitTimeOut</key><integer>120</integer>
+  <key>WorkingDirectory</key><string>/usr/local</string>
+  <key>ThrottleInterval</key><integer>10</integer>
+  <key>StandardOutPath</key><string>/Users/dahai/.linlinqi/logs/postgresql.log</string>
+  <key>StandardErrorPath</key><string>/Users/dahai/.linlinqi/logs/postgresql-error.log</string>
+</dict>
+</plist>
