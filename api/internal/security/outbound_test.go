@@ -7,10 +7,10 @@ import (
 )
 
 func TestValidateOutboundURLPrivateAccessIsExplicit(t *testing.T) {
-	if _, err := ValidateOutboundURL(context.Background(), "http://127.0.0.1:8080/image.png", false); err == nil {
+	if _, err := ValidateOutboundURL(context.Background(), "http://127.0.0.1:8081/image.png", false); err == nil {
 		t.Fatal("production policy accepted private HTTP endpoint")
 	}
-	parsed, err := ValidateOutboundURL(context.Background(), "http://127.0.0.1:8080/image.png", true)
+	parsed, err := ValidateOutboundURL(context.Background(), "http://127.0.0.1:8081/image.png", true)
 	if err != nil || parsed.Hostname() != "127.0.0.1" {
 		t.Fatalf("explicit development policy rejected local endpoint: %v", err)
 	}

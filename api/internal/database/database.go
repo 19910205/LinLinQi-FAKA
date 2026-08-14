@@ -1492,7 +1492,7 @@ func Migrate(db *gorm.DB) error {
 			func(migration *gorm.DB) error {
 				// Uploaded media is served from the configured media base URL.
 				// Native self-hosted deployments legitimately use loopback HTTP
-				// (for example http://127.0.0.1:8081/media/...), so the strict
+				// (for example http://127.0.0.1:8080/media/...), so the strict
 				// HTTPS-only check on media_assets.public_url must also accept
 				// loopback addresses. External CDN URLs remain HTTPS-only.
 				statements := []string{
@@ -1519,7 +1519,7 @@ func Migrate(db *gorm.DB) error {
 			"66c6a51b1e621852b28d4ba855651e1d4a1938569951346aa4856eadc8e57fe9",
 			func(migration *gorm.DB) error {
 				// The media base URL includes a port in native deployments
-				// (http://127.0.0.1:8081/media/...), so the loopback patterns
+				// (http://127.0.0.1:8080/media/...), so the loopback patterns
 				// must not require a slash immediately after the hostname.
 				statements := []string{
 					`ALTER TABLE media_assets DROP CONSTRAINT IF EXISTS chk_media_assets_external_url`,

@@ -30,8 +30,8 @@ func TestNormalizeAdminSettingsAcceptsUploadedLogoMediaURLs(t *testing.T) {
 	// and a deployed installation may use an application-owned relative path.
 	for _, logo := range []string{
 		"/media/sha256/abc/def.jpg",
-		"http://127.0.0.1:8081/media/sha256/abc/def.jpg",
-		"http://localhost:8081/media/sha256/abc/def.jpg",
+		"http://127.0.0.1:8080/media/sha256/abc/def.jpg",
+		"http://localhost:8080/media/sha256/abc/def.jpg",
 		"https://cdn.example.com/logo.svg",
 	} {
 		values, _, err := normalizeAdminSettings(map[string]string{"store_logo_url": logo})

@@ -128,7 +128,7 @@ func main() {
 
 func parseFlags() config {
 	var cfg config
-	flag.StringVar(&cfg.BaseURL, "base-url", "http://127.0.0.1:8080", "LinLinQi loopback API URL")
+	flag.StringVar(&cfg.BaseURL, "base-url", "http://127.0.0.1:8081", "LinLinQi loopback API URL")
 	flag.IntVar(&cfg.Concurrency, "concurrency", 4, "worker concurrency (1-16)")
 	flag.IntVar(&cfg.RequestBudget, "max-requests", 100, "hard global request budget (1-500)")
 	flag.IntVar(&cfg.QuoteRequests, "quote-requests", 20, "bounded product quote requests (0 disables)")
@@ -594,7 +594,7 @@ func (r *runner) webhookSSRF() {
 		r.skip("webhook_ssrf", "ssrf", "authenticated session unavailable")
 		return
 	}
-	targets := []string{"http://127.0.0.1:8080/health", "http://localhost:8080/health", "http://169.254.169.254/latest/meta-data"}
+	targets := []string{"http://127.0.0.1:8081/health", "http://localhost:8081/health", "http://169.254.169.254/latest/meta-data"}
 	start := time.Now()
 	failures := 0
 	for _, target := range targets {

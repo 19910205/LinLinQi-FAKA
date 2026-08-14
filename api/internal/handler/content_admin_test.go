@@ -44,8 +44,8 @@ func TestNormalizePublicHTTPSURLRejectsPrivateAndCredentialedLocations(t *testin
 func TestNormalizeImageURLAcceptsUploadedMediaAndRejectsDowngradeAttempts(t *testing.T) {
 	for input, expected := range map[string]string{
 		"/media/sha256/abc/def.jpg":                    "/media/sha256/abc/def.jpg",
-		" http://127.0.0.1:8081/media/logo.webp ":      "http://127.0.0.1:8081/media/logo.webp",
-		"http://localhost:8081/media/logo.png":          "http://localhost:8081/media/logo.png",
+		" http://127.0.0.1:8080/media/logo.webp ":      "http://127.0.0.1:8080/media/logo.webp",
+		"http://localhost:8080/media/logo.png":          "http://localhost:8080/media/logo.png",
 		"https://cdn.example.com/post-cover.webp?v=2":   "https://cdn.example.com/post-cover.webp?v=2",
 	} {
 		got, err := normalizeImageURL(input, false)
@@ -60,7 +60,7 @@ func TestNormalizeImageURLAcceptsUploadedMediaAndRejectsDowngradeAttempts(t *tes
 		"https://localhost/image.png",
 		"https://10.0.0.3/image.png",
 		"https://cdn.example.com/image.png?access_token=secret",
-		"http://127.0.0.1:8081/media/logo.png\r\nX-Evil: 1",
+		"http://127.0.0.1:8080/media/logo.png\r\nX-Evil: 1",
 	} {
 		if value, err := normalizeImageURL(invalid, false); err == nil {
 			t.Fatalf("unsafe image URL accepted: input=%q normalized=%q", invalid, value)

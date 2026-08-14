@@ -13,7 +13,7 @@ go build -o ./security-smoke ./cmd/security-smoke
 
 ```bash
 ./security-smoke \
-  --base-url http://127.0.0.1:8080 \
+  --base-url http://127.0.0.1:8081 \
   --concurrency 4 \
   --max-requests 100 \
   --quote-requests 20

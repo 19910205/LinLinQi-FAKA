@@ -202,7 +202,7 @@ func TestAdminManualOrderIsIdempotentPostgreSQL(t *testing.T) {
 	if redisAddr == "" {
 		redisAddr = "127.0.0.1:1"
 	}
-	h := Handler{DB: db, Vault: vault, Cfg: config.Config{Env: "test", RedisAddr: redisAddr, UserAppURL: "http://localhost:5173"}}
+	h := Handler{DB: db, Vault: vault, Cfg: config.Config{Env: "test", RedisAddr: redisAddr, UserAppURL: "http://localhost:8080"}}
 	requestBody, _ := json.Marshal(adminManualOrderRequest{
 		ProductID: product.ID.String(), Quantity: 1, Email: "manual@example.com", PaymentReference: "BANK-MANUAL-IDEMPOTENT-1",
 	})

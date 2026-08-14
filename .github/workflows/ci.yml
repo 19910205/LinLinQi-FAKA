@@ -125,10 +125,10 @@ jobs:
         run: docker compose --env-file .env -f docker-compose.yml up -d --build --wait --wait-timeout 300
       - name: Verify public health endpoints
         run: |
-          curl --fail --silent --show-error http://127.0.0.1:8080/live
-          curl --fail --silent --show-error http://127.0.0.1:8080/ready
-          curl --fail --silent --show-error http://127.0.0.1:5173/healthz
-          curl --fail --silent --show-error http://127.0.0.1:5174/healthz
+          curl --fail --silent --show-error http://127.0.0.1:8081/live
+          curl --fail --silent --show-error http://127.0.0.1:8081/ready
+          curl --fail --silent --show-error http://127.0.0.1:8080/healthz
+          curl --fail --silent --show-error http://127.0.0.1:8082/healthz
           docker compose --env-file .env -f docker-compose.yml exec -T api \
             /bin/sh -ceu 'test -w /var/lib/linlinqi/storage/media/staging'
           docker compose --env-file .env -f docker-compose.yml exec -T worker \

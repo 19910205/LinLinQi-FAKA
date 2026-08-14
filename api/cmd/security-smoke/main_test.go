@@ -18,13 +18,13 @@ func validTestConfig(target string) config {
 }
 
 func TestValidateLoopbackURL(t *testing.T) {
-	valid := []string{"http://127.0.0.1:8080", "http://localhost:8080", "http://[::1]:8080/"}
+	valid := []string{"http://127.0.0.1:8081", "http://localhost:8081", "http://[::1]:8081/"}
 	for _, value := range valid {
 		if _, err := validateLoopbackURL(value); err != nil {
 			t.Fatalf("expected %s to be valid: %v", value, err)
 		}
 	}
-	invalid := []string{"https://example.com", "http://127.0.0.2:8080", "http://0.0.0.0:8080", "http://user:pass@localhost:8080", "file:///tmp/a", "http://localhost:8080/api"}
+	invalid := []string{"https://example.com", "http://127.0.0.2:8081", "http://0.0.0.0:8081", "http://user:pass@localhost:8081", "file:///tmp/a", "http://localhost:8081/api"}
 	for _, value := range invalid {
 		if _, err := validateLoopbackURL(value); err == nil {
 			t.Fatalf("expected %s to be rejected", value)
@@ -33,17 +33,17 @@ func TestValidateLoopbackURL(t *testing.T) {
 }
 
 func TestValidateConfigSafetyCaps(t *testing.T) {
-	cfg := validTestConfig("http://127.0.0.1:8080")
+	cfg := validTestConfig("http://127.0.0.1:8081")
 	cfg.Concurrency = maxConcurrency + 1
 	if err := validateConfig(&cfg); err == nil {
 		t.Fatal("expected concurrency cap rejection")
 	}
-	cfg = validTestConfig("http://127.0.0.1:8080")
+	cfg = validTestConfig("http://127.0.0.1:8081")
 	cfg.RequestBudget = maxRequestBudget + 1
 	if err := validateConfig(&cfg); err == nil {
 		t.Fatal("expected budget cap rejection")
 	}
-	cfg = validTestConfig("http://127.0.0.1:8080")
+	cfg = validTestConfig("http://127.0.0.1:8081")
 	cfg.OrderReplays = 2
 	if err := validateConfig(&cfg); err == nil {
 		t.Fatal("expected financial opt-in rejection")
@@ -51,7 +51,7 @@ func TestValidateConfigSafetyCaps(t *testing.T) {
 }
 
 func TestRunnerRequestAndBudget(t *testing.T) {
-	cfg := validTestConfig("http://127.0.0.1:8080")
+	cfg := validTestConfig("http://127.0.0.1:8081")
 	cfg.RequestBudget = 1
 	if err := validateConfig(&cfg); err != nil {
 		t.Fatal(err)

@@ -15,7 +15,7 @@ import (
 func TestWalletOnlyAdminRoutesExist(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	engine := New(
-		config.Config{Env: "development", TrustedProxies: []string{}, CORSOrigins: []string{"http://localhost:5174"}},
+		config.Config{Env: "development", TrustedProxies: []string{}, CORSOrigins: []string{"http://localhost:8082"}},
 		&gorm.DB{},
 		redis.NewClient(&redis.Options{Addr: "127.0.0.1:6379"}),
 		nil,

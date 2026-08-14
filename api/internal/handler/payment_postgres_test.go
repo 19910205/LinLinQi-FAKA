@@ -317,7 +317,7 @@ func TestBepusdtChannelDriverAndCreatePostgreSQL(t *testing.T) {
 	}
 	result, err := driver.Create(t.Context(), payment.CreateRequest{
 		IntentNo: "LQI-BEPUSDT-1", OrderNo: "LQ-1", Amount: 10050, Currency: "CNY",
-		Subject: "LinLinQi 数字商品订单 LQ-1", NotifyURL: "http://127.0.0.1:8080/api/v1/payments/bepusdt_usdt_trc20/callback", ReturnURL: "http://127.0.0.1:8081/orders",
+		Subject: "LinLinQi 数字商品订单 LQ-1", NotifyURL: "http://127.0.0.1:8081/api/v1/payments/bepusdt_usdt_trc20/callback", ReturnURL: "http://127.0.0.1:8080/orders",
 	})
 	if err != nil {
 		t.Fatalf("bepusdt create: %v", err)

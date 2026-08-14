@@ -12,8 +12,8 @@ RUN apk add --no-cache ca-certificates tzdata wget \
     && adduser -S -D -H -u 10001 -G linlinqi linlinqi
 COPY --from=builder /linlinqi-api /usr/local/bin/linlinqi-api
 USER 10001:10001
-EXPOSE 8080
+EXPOSE 8081
 STOPSIGNAL SIGTERM
 HEALTHCHECK --interval=10s --timeout=3s --start-period=20s --retries=5 \
-  CMD wget -q -T 2 -O /dev/null http://127.0.0.1:8080/ready || exit 1
+  CMD wget -q -T 2 -O /dev/null http://127.0.0.1:8081/ready || exit 1
 ENTRYPOINT ["linlinqi-api"]

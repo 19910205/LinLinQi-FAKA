@@ -12,7 +12,7 @@ x-api-environment: &api-environment
   # that localhost has public TLS.
   APP_ENV: ${APP_ENV:-production}
   APP_BIND_ADDRESS: 0.0.0.0
-  APP_PORT: 8080
+  APP_PORT: ${APP_PORT:-8081}
   APP_URL: ${APP_URL:?APP_URL is required}
   SUPPLIER_CALLBACK_URL: ${SUPPLIER_CALLBACK_URL:-}
   USER_APP_URL: ${USER_APP_URL:?USER_APP_URL is required}
@@ -168,7 +168,7 @@ services:
       media-init: { condition: service_completed_successfully }
     networks: [edge, data]
     ports:
-      - ${BIND_ADDRESS:-127.0.0.1}:${API_PUBLISHED_PORT:-8080}:8080
+      - ${BIND_ADDRESS:-127.0.0.1}:${API_PUBLISHED_PORT:-8081}:8081
     read_only: true
     tmpfs:
       - /tmp:size=64m,mode=1777
@@ -180,7 +180,7 @@ services:
     stop_grace_period: 30s
     logging: *default-logging
     healthcheck:
-      test: ["CMD", "wget", "-q", "-T", "2", "-O", "/dev/null", "http://127.0.0.1:8080/ready"]
+      test: ["CMD", "wget", "-q", "-T", "2", "-O", "/dev/null", "http://127.0.0.1:8081/ready"]
       interval: 10s
       timeout: 3s
       retries: 10
@@ -238,7 +238,7 @@ services:
     pids_limit: 64
     security_opt: ["no-new-privileges:true"]
     ports:
-      - ${BIND_ADDRESS:-127.0.0.1}:${USER_PUBLISHED_PORT:-5173}:8080
+      - ${BIND_ADDRESS:-127.0.0.1}:${USER_PUBLISHED_PORT:-8080}:8080
     logging: *default-logging
     healthcheck:
       test: ["CMD", "wget", "-q", "-T", "2", "-O", "/dev/null", "http://127.0.0.1:8080/healthz"]
@@ -265,7 +265,7 @@ services:
     pids_limit: 64
     security_opt: ["no-new-privileges:true"]
     ports:
-      - ${BIND_ADDRESS:-127.0.0.1}:${ADMIN_PUBLISHED_PORT:-5174}:8080
+      - ${BIND_ADDRESS:-127.0.0.1}:${ADMIN_PUBLISHED_PORT:-8082}:8080
     logging: *default-logging
     healthcheck:
       test: ["CMD", "wget", "-q", "-T", "2", "-O", "/dev/null", "http://127.0.0.1:8080/healthz"]

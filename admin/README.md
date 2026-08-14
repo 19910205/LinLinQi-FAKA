@@ -11,7 +11,7 @@ npm ci
 npm run dev
 ```
 
-The dev server proxies `/api` to `http://localhost:8080` through Vite. Production build:
+The dev server proxies `/api` to `http://localhost:8081` through Vite. Production build:
 
 ```bash
 npm run build

@@ -1,6 +1,6 @@
 # LinLinQi security smoke report
 
-- Target: `http://127.0.0.1:8080`
+- Target: `http://127.0.0.1:8081`
 - Started: `2026-08-09T15:04:33Z`
 - Requests: 95/180
 - Concurrency: 8

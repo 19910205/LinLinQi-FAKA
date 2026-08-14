@@ -40,7 +40,7 @@
 
 ## macOS 原生部署
 
-- 原生部署使用全局 Homebrew 二进制，不依赖 Docker、Colima 或其他虚拟机。当前端口为 API `127.0.0.1:8080`、商城 `127.0.0.1:8081`、后台 `127.0.0.1:8082`、Redis `127.0.0.1:6379`、PostgreSQL 18 `127.0.0.1:5433`；5433 用于避开宿主机既有的 5432 数据库。
+- 原生部署使用全局 Homebrew 二进制，不依赖 Docker、Colima 或其他虚拟机。当前端口为 API `127.0.0.1:8081`、商城 `127.0.0.1:8080`、后台 `127.0.0.1:8082`、Redis `127.0.0.1:6379`、PostgreSQL 18 `127.0.0.1:5433`；5433 用于避开宿主机既有的 5432 数据库。
 - API、Worker 与前端构建产物直接从项目目录 `/Users/dahai/Documents/faka` 运行：后端为 `api/linlinqi`，前端为 `user/dist` 与 `admin/dist`。`~/Library/LaunchAgents/com.linlinqi.*.plist` 负责登录后自启，`scripts/native-macos-service.sh status|start|stop|restart` 统一管理五个服务。
 - macOS 会阻止 LaunchAgent 直接执行 `Documents` 中的程序。当前本机因此使用 `make local-start|local-stop|local-restart|local-status` 管理项目目录内的 API/Worker；PID 与日志保存在项目的 `.runtime/`。Nginx、PostgreSQL、Redis 仍由 LaunchAgent 托管。
 - PostgreSQL 仅监听环回地址，TCP 使用 SCRAM-SHA-256；Redis 使用只保存密码哈希的 ACL、AOF `everysec`、512MB 上限和 `noeviction`。运行环境副本和管理员初始凭据必须保持 `0600`。
@@ -52,7 +52,7 @@
 - 原生包装器默认设置 `STORAGE_ROOT=/Users/dahai/.linlinqi/storage`，并以 `0700` 创建 `media/objects/sha256`、`media/staging`、`media/quarantine`、`mirror/objects`、`spool/protocol-sync` 与 `tmp`。可在发布前运行 `make native-prepare-storage`；该命令只补目录和权限，不覆盖 `~/.linlinqi/config/linlinqi.env`。
 - 上传与镜像共享 `media/objects/sha256/<前两位>/<SHA-256>.<扩展名>`，相同内容只保留一份。只有对象目录属于永久业务数据；staging、quarantine、spool 与 tmp 不得经由 nginx 暴露，也不应进入常规备份。
 - `MEDIA_MAX_IMAGE_BYTES` 控制单文件上限，`MEDIA_STORAGE_MAX_BYTES` 控制对象总量，`MEDIA_MIN_FREE_BYTES` 是拒绝继续写入前必须保留的文件系统余量。默认分别为 20 MiB、200 GiB 与 100 GiB。变更上限前必须确认 PostgreSQL 所在卷仍有独立安全余量。
-- `MEDIA_PUBLIC_BASE_URL` 必须指向公开 `/media` 基址。生产使用 HTTPS，例如 `https://api.example.com/media`；原生环回验收默认使用商城 nginx 同源代理 `http://127.0.0.1:8081/media`。
+- `MEDIA_PUBLIC_BASE_URL` 必须指向公开 `/media` 基址。生产使用 HTTPS，例如 `https://api.example.com/media`；原生环回验收默认使用商城 nginx 同源代理 `http://127.0.0.1:8080/media`。
 - API 的 `/ready` 会验证存储目录、真实写入与剩余空间。nginx 模板将 `/media/` 反向代理给 API，由 API 校验内容寻址路径和 MIME，并返回一年 immutable 缓存；nginx 没有 staging 或对象根目录的直接文件权限映射。
 - 当前 macOS 用户没有目录级 quota 时，应用配额只是第一道保护。正式保存客户媒体前应启用 FileVault，并优先把 `STORAGE_ROOT` 放在有 quota 的独立 APFS 卷或独立磁盘，避免媒体写满拖垮 PostgreSQL。
 

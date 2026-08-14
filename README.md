@@ -87,11 +87,11 @@ docker compose --env-file .env -f docker-compose.yml -f docker-compose.dev.yml u
 
 Access after boot:
 
-- Storefront: <http://localhost:5173>
-- Admin console: <http://localhost:5174>
-- API: <http://localhost:8080>
-- Readiness: <http://localhost:8080/ready>
-- Prometheus: `GET http://localhost:8080/metrics` with header `Authorization: Bearer $METRICS_TOKEN`
+- Storefront: <http://localhost:8080>
+- Admin console: <http://localhost:8082>
+- API: <http://localhost:8081>
+- Readiness: <http://localhost:8081/ready>
+- Prometheus: `GET http://localhost:8081/metrics` with header `Authorization: Bearer $METRICS_TOKEN`
 
 > **Default dev credentials are only `admin / LinLinQi@2026`** — never use them on the public internet or in production.
 
@@ -100,9 +100,9 @@ Access after boot:
 Pin the global toolchain via `.tool-versions`, `.node-version`, `.nvmrc` and `.go-version`; after installing Node 24.18.1 run `npm install --global npm@12.0.2`. Then:
 
 ```bash
-make dev-api     # API (Go, port 8080)
-make dev-user    # storefront (Vite, port 5173)
-make dev-admin   # admin console (Vite, port 5174)
+make dev-api     # API (Go, port 8081)
+make dev-user    # storefront (Vite, port 8080)
+make dev-admin   # admin console (Vite, port 8082)
 make migrate     # run DB migrations manually
 ```
 

@@ -3,7 +3,7 @@ import { ref } from "vue";
 import axios from "axios";
 
 const baseURL =
-  import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8080/admin/v1";
+  import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8081/admin/v1";
 const AUTH_STORAGE_PREFIX = "linlinqi-admin";
 const authTokenKey = `${AUTH_STORAGE_PREFIX}-token`;
 const authProfileKey = `${AUTH_STORAGE_PREFIX}-profile`;

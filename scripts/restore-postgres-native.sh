@@ -252,7 +252,7 @@ if [[ "${api_was_loaded}" == "true" ]]; then
   launchctl kickstart "${launch_domain}/com.linlinqi.api"
   api_healthy=false
   for _ in {1..60}; do
-    if curl --fail --silent --show-error --max-time 2 http://127.0.0.1:8080/ready >/dev/null 2>&1; then
+    if curl --fail --silent --show-error --max-time 2 http://127.0.0.1:8081/ready >/dev/null 2>&1; then
       api_healthy=true
       break
     fi
@@ -280,7 +280,7 @@ fi
 if [[ "${nginx_was_loaded}" == "true" ]]; then
   launchctl bootstrap "${launch_domain}" "${launch_agents}/com.linlinqi.nginx.plist"
   launchctl kickstart "${launch_domain}/com.linlinqi.nginx"
-  for nginx_health_url in http://127.0.0.1:8081/healthz http://127.0.0.1:8082/healthz; do
+  for nginx_health_url in http://127.0.0.1:8080/healthz http://127.0.0.1:8082/healthz; do
     nginx_healthy=false
     for _ in {1..30}; do
       if curl --fail --silent --show-error --max-time 2 "${nginx_health_url}" >/dev/null 2>&1; then
