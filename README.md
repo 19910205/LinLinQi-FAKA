@@ -1,5 +1,7 @@
 # LinLinQi-FAKA
 
+> ⚠️ **!!! THE PROJECT IS IN THE DEVELOPMENT STAGE — updates and fixes will be made as time permits !!!**
+
 > **LinLinQi-FAKA** is an open-source reference implementation of an enterprise-grade digital goods auto-delivery platform, composed of a Go API, a Vue customer storefront, a Vue operations console, PostgreSQL, and Redis.
 
 ---

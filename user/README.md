@@ -1,28 +1,30 @@
-# LinLinQi 用户前台
+# LinLinQi Customer Storefront
 
-LinLinQi 自动虚拟发卡平台的用户端，基于 Vue 3、Vite 与 TypeScript。
+> ⚠️ **!!! THE PROJECT IS IN THE DEVELOPMENT STAGE — updates and fixes will be made as time permits !!!**
 
-## 本地开发
+The customer-facing frontend of the LinLinQi digital goods auto-delivery platform, built with Vue 3, Vite and TypeScript.
+
+## Local Development
 
 ```bash
 npm ci
 npm run dev
 ```
 
-开发服务器通过 Vite 将 `/api` 代理到 `http://localhost:8080`。生产构建：
+The dev server proxies `/api` to `http://localhost:8080` through Vite. Production build:
 
 ```bash
 npm run build
 ```
 
-## 主要页面
+## Main Pages
 
-- 商品分类、搜索、规格选择、购物车与结算
-- 游客订单、会员订单、支付与卡密交付
-- 登录、注册、找回密码、会话安全
-- 钱包、礼品卡、工单、推广返佣与 OpenAPI 密钥
-- 经销商申请、等级、域名与价格规则
-- 公告、博客、服务条款与隐私政策
-- 黑白主题与移动端适配
+- Product categories, search, SKU selection, cart and checkout
+- Guest orders, member orders, payments and card-key delivery
+- Sign-up, sign-in, password recovery and session security
+- Wallet, gift cards, tickets, referral commissions and OpenAPI keys
+- Reseller application, tiers, domains and pricing rules
+- Announcements, blog, terms of service and privacy policy
+- Light/dark themes and mobile adaptation
 
-生产环境的 API、支付回调、邮件与外部跳转地址由后端统一配置，前端不保存任何服务端密钥。
+The API, payment callbacks, email and external redirect URLs in production are configured centrally by the backend; the frontend stores no server-side secrets.

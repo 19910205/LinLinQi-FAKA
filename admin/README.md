@@ -1,5 +1,7 @@
 # LinLinQi Admin Console
 
+> ⚠️ **!!! THE PROJECT IS IN THE DEVELOPMENT STAGE — updates and fixes will be made as time permits !!!**
+
 The operations management console of the LinLinQi digital goods auto-delivery platform, built with Vue 3, Vite and TypeScript.
 
 ## Local Development
