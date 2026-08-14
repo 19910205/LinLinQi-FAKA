@@ -1,29 +1,29 @@
-# LinLinQi 管理后台
+# LinLinQi Admin Console
 
-LinLinQi 自动虚拟发卡平台的运营管理端，基于 Vue 3、Vite 与 TypeScript。
+The operations management console of the LinLinQi digital goods auto-delivery platform, built with Vue 3, Vite and TypeScript.
 
-## 本地开发
+## Local Development
 
 ```bash
 npm ci
 npm run dev
 ```
 
-开发服务器通过 Vite 将 `/api` 代理到 `http://localhost:8080`。生产构建：
+The dev server proxies `/api` to `http://localhost:8080` through Vite. Production build:
 
 ```bash
 npm run build
 ```
 
-## 管理范围
+## Scope
 
-- 商品、规格、分类、卡密库存与批次
-- 订单、支付通道、退款、钱包与对账
-- 用户、等级、经销商、推广、优惠活动与礼品卡
-- 供应商、采购、库存同步与 OpenAPI 凭证
-- 工单、内容、通知、Webhook、审计与风控
-- 管理员 RBAC、TOTP 双因素认证及恢复码
-- 运行指标、任务队列、系统配置与维护状态
-- 黑白主题与响应式运营界面
+- Products, SKUs, categories, card-key inventory and batches
+- Orders, payment channels, refunds, wallets and reconciliation
+- Customers, tiers, resellers, promotions, campaigns and gift cards
+- Suppliers, procurement, inventory sync and OpenAPI credentials
+- Tickets, content, notifications, webhooks, audit and risk control
+- Admin RBAC, TOTP two-factor authentication and recovery codes
+- Runtime metrics, job queues, system configuration and maintenance status
+- Light/dark themes and a responsive operations UI
 
-管理端不包含离线登录或生产演示兜底；所有权限和数据均由后端验证并提供。
+The console has no offline login or production demo fallback; all permissions and data are validated and provided by the backend.
