@@ -195,6 +195,11 @@ values.SUPPORT_EMAIL = normalizeEmail(
 );
 values.CORS_ORIGINS = `${urls.user},${urls.admin}`;
 values.SUPPLIER_CALLBACK_URL = values.SUPPLIER_CALLBACK_URL || urls.api;
+// Frontend bundles compile the API origin in at image build. Derive both
+// endpoints from the canonical API URL so a generated .env never leaks the
+// example.com placeholder into production builds.
+values.PUBLIC_USER_API_URL = `${urls.api}/api/v1`;
+values.PUBLIC_ADMIN_API_URL = `${urls.api}/admin/v1`;
 values.BOOTSTRAP_ADMIN = options.bootstrap_admin === "true" ? "true" : values.BOOTSTRAP_ADMIN || "false";
 if (options.bootstrap_admin_password) {
   values.BOOTSTRAP_ADMIN_PASSWORD = options.bootstrap_admin_password;

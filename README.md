@@ -93,6 +93,8 @@ Access after boot:
 - Readiness: <http://localhost:8081/ready>
 - Prometheus: `GET http://localhost:8081/metrics` with header `Authorization: Bearer $METRICS_TOKEN`
 
+> **Ports are configured in one place**: the `APP_PORT` (API), `API_PUBLISHED_PORT` (API published), `USER_PUBLISHED_PORT` (storefront) and `ADMIN_PUBLISHED_PORT` (admin console) values in `.env` (see `.env.example` for the annotated block). To change ports, edit only those values and restart the services — the API, Vite dev servers, Compose, nginx and frontend API endpoints all read from `.env`.
+
 > **Default dev credentials are only `admin / LinLinQi@2026`** — never use them on the public internet or in production.
 
 ### Option B: Local Development on Host
@@ -209,7 +211,22 @@ Each service ships its own `Dockerfile` (`api/Dockerfile`, `user/Dockerfile`, `a
 
 ## Production Deployment Notes
 
-1. Create `.env` with `umask 077`, set real domains, and generate separate keys for PostgreSQL, Redis, JWT, data encryption, OpenAPI and metrics with `openssl rand -hex 32`. The PostgreSQL password must stay URL-safe; keep `.env` at `0600` and never commit it.
+1. Create `.env` — either with the generator, or manually with `umask 077`:
+
+   ```bash
+   # Recommended: fill every secret with a strong random value and derive the
+   # public HTTPS URLs (API/storefront/admin + the PUBLIC_*_API_URL endpoints
+   # that frontend bundles compile in). Existing secrets are preserved.
+   node scripts/generate-production-env.mjs \
+     --api-url https://api.example.com \
+     --user-url https://store.example.com \
+     --admin-url https://admin.example.com \
+     --support-email ops@example.com
+   # Or for a host whose DNS names already point here:
+   #   node scripts/generate-production-env.mjs --auto-host store.example.com
+   ```
+
+   Manually, set real domains and generate separate keys for PostgreSQL, Redis, JWT, data encryption, OpenAPI and metrics with `openssl rand -hex 32`. The PostgreSQL password must stay URL-safe; keep `.env` at `0600` and never commit it.
 2. Set `BOOTSTRAP_ADMIN=true` with a strong `BOOTSTRAP_ADMIN_PASSWORD` only for the first boot, then flip it back to `false` and remove the bootstrap password. `SEED_DATA` is dev-only; production refuses to start with it enabled.
 3. Create `signed_http` payment channels, supplier connections, notification relays and webhooks in the admin API.
 4. Put a trusted TLS reverse proxy in front, forwarding public HTTPS domains to the three loopback ports in `.env`; the base Compose does not issue certificates.
