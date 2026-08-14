@@ -23,8 +23,6 @@ Copyright (c) 2026 LinLinQi
 5. 无担保
    本软件按"现状"提供，不作任何明示或默示的担保，包括但不限于适销性、特定用途适用性及不侵权的担保。
 
-6. 无内置凭证
-   本软件不包含任何真实的支付机构、供货商凭证、生产密钥或可对外连接的敏感配置。生产环境接入外部系统需由使用者自行完成合法合规与安全审计。
 
 English Terms
 =============
@@ -46,5 +44,3 @@ This project (the "Software") is released as open source, subject to the followi
 5. No Warranty
    The Software is provided "AS IS", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and non-infringement.
 
-6. No Built-in Credentials
-   The Software contains no real payment providers, supplier credentials, production keys, or sensitive external connection configurations. Any production integration with external systems must be completed by the user through their own compliance and security review.
