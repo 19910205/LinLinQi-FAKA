@@ -1,4 +1,4 @@
-<img width="1769" height="842" alt="image" src="https://github.com/user-attachments/assets/b28aa1f8-6244-4d43-ad33-afcd1cd84c65" /># LinLinQi-FAKA
+<img width="3540" height="1690" alt="微信图片_20260815103656_45_5" src="https://github.com/user-attachments/assets/b276fb05-9630-4e84-b896-a1f54100745a" /># LinLinQi-FAKA
 
 > ⚠️ **!!! THE PROJECT IS IN THE DEVELOPMENT STAGE — updates and fixes will be made as time permits !!!**
 
