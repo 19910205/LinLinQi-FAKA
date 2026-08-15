@@ -1,4 +1,4 @@
-# LinLinQi-FAKA
+<img width="1769" height="842" alt="image" src="https://github.com/user-attachments/assets/b28aa1f8-6244-4d43-ad33-afcd1cd84c65" /># LinLinQi-FAKA
 
 > ⚠️ **!!! THE PROJECT IS IN THE DEVELOPMENT STAGE — updates and fixes will be made as time permits !!!**
 
@@ -17,6 +17,15 @@
 5. This project ships with no real payment providers, supplier credentials, or production keys; integrating external systems for production requires your own compliance and security review.
 
 ---
+<img width="3540" height="1690" alt="微信图片_20260815103656_45_5" src="https://github.com/user-attachments/assets/b276fb05-9630-4e84-b896-a1f54100745a" />
+<img width="3538" height="1694" alt="微信图片_20260815103656_44_5" src="https://github.com/user-attachments/assets/1513fd70-d59a-4abb-b48c-e138aa762880" />
+<img width="3542" height="1686" alt="微信图片_20260815103655_43_5" src="https://github.com/user-attachments/assets/cbb359f6-b2fc-48d3-9915-91a34b4794ee" />
+<img width="3538" height="1682" alt="微信图片_20260815103655_42_5" src="https://github.com/user-attachments/assets/0503eb5e-00a7-48c4-8f0c-024defac63e4" />
+<img width="3538" height="1686" alt="微信图片_20260815103655_41_5" src="https://github.com/user-attachments/assets/fcfd6911-5dd3-4548-a255-c5f8964f4f3e" />
+<img width="1769" height="842" alt="image" src="https://github.com/user-attachments/assets/768b0b88-c11e-41c4-a961-5613de7e4af9" />
+<img width="1767" height="839" alt="image" src="https://github.com/user-attachments/assets/e557bd09-a2e2-4224-ad92-2099f9ecc80d" />
+
+
 
 ## Overview
 
